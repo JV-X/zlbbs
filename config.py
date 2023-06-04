@@ -1,4 +1,7 @@
+import os
+
 DEBUG = True
+SECRET_KEY = os.urandom(24)
 
 DB_USERNAME = 'root'
 DB_PASSWORD = 'xjv123..'

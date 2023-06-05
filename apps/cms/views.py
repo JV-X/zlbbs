@@ -1,5 +1,5 @@
 from flask import Blueprint, views, render_template, request, session, redirect, url_for, g
-from .forms import LoginForm
+from .forms import LoginForm, ResetPwdForm
 from .models import CMSUser
 from .decorators import login_required
 import config
@@ -50,6 +50,7 @@ class LoginView(views.MethodView):
 
 class ResetPwdView(views.MethodView):
     decorators = [login_required]
+
     def get(self):
         return render_template('cms/cms_resetpwd.html')
 

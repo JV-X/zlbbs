@@ -18,6 +18,7 @@
 <div class="container">
     <form class="form-signin" method="post">
         <h2 class="form-signin-heading">请登录</h2>
+        <input type="hidden" value="{{ csrf_token() }}" name='csrf_token'>
         <label for="inputEmail" class="sr-only">邮箱</label>
         <input type="email" id="inputEmail" class="form-control" placeholder="邮箱" name="email" required autofocus>
         <label for="inputPassword" class="sr-only">密码</label>

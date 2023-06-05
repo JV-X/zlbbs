@@ -9,7 +9,7 @@ from flask import (
     g,
     jsonify,
 )
-from .forms import LoginForm, ResetPwdForm
+from .forms import LoginForm, ResetPwdForm, ResetEmailForm
 from .models import CMSUser
 from .decorators import login_required
 import config
@@ -83,5 +83,21 @@ class ResetPwdView(views.MethodView):
             return restful.params_error(form.get_error())
 
 
+class ResetEmailView(views.MethodView):
+    decorators = [login_required]
+
+    def get(self):
+        return render_template('cms/cms_resetemail.html')
+
+    def post(self):
+        form = ResetEmailForm(request.form)
+        if form.validate():
+            email = form.email.data
+            captcha = form.captcha.data
+        else:
+            return restful.params_error(form.get_error())
+
+
+bp.add_url_rule('/resetemail/', view_func=ResetEmailView.as_view('resetemail'))
 bp.add_url_rule('/login/', view_func=LoginView.as_view('login'))
 bp.add_url_rule('/resetpwd/', view_func=ResetPwdView.as_view('resetpwd'))

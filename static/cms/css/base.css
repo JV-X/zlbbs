@@ -183,7 +183,9 @@ body {
     margin-top: 20px;
 }
 
-
+.form-container {
+    width: 300px;
+}
 
 .top-group{
     padding: 5px 10px;

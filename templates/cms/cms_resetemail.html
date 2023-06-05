@@ -5,6 +5,9 @@
 {% block page_title -%}
 {{ self.title() }}
 {%- endblock %}
+{% block head %}
+    <script src="{{ static('cms/js/resetemail.js') }}"></script>
+{% endblock %}
 
 {% block main_content %}
     <form action="" method="post">

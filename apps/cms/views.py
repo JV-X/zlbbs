@@ -1,3 +1,6 @@
+import random
+import string
+
 from flask import (
     Blueprint,
     views,
@@ -16,6 +19,8 @@ import config
 from exts import db, mail
 from flask_mail import Message
 from utils import restful
+import string
+import random
 
 bp = Blueprint('cms', __name__, url_prefix='/cms')
 
@@ -42,6 +47,23 @@ def email():
     m = Message('使用消息测试一下', recipients=['xjv1195275315@qq.com'], body='这是body')
     mail.send(m)
     return 'success'
+
+
+@bp.route('/email_captcha/')
+def email_captcha():
+    email = request.args.get('email')
+    if not email:
+        return restful.params_error('请填写邮箱')
+    source = list(string.ascii_letters)
+    source.extend(map(lambda x: str(x), range(0, 10)))
+    captcha = random.sample(source, 6)
+    captcha = ''.join(captcha)
+    m = Message('Python 论坛邮箱验证码', recipients=[email], body=f'您的验证码是{captcha}')
+    try:
+        mail.send(m)
+    except:
+        return restful.servererror('发送邮件失败')
+    return restful.success()
 
 
 class LoginView(views.MethodView):

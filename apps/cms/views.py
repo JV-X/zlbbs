@@ -13,7 +13,8 @@ from .forms import LoginForm, ResetPwdForm, ResetEmailForm
 from .models import CMSUser
 from .decorators import login_required
 import config
-from exts import db
+from exts import db, mail
+from flask_mail import Message
 from utils import restful
 
 bp = Blueprint('cms', __name__, url_prefix='/cms')
@@ -34,6 +35,13 @@ def logout():
 @bp.route('profile')
 def profile():
     return render_template('cms/cms_profile.html')
+
+
+@bp.route('/email')
+def email():
+    m = Message('使用消息测试一下', recipients=['xjv1195275315@qq.com'], body='这是body')
+    mail.send(m)
+    return 'success'
 
 
 class LoginView(views.MethodView):

@@ -1,6 +1,8 @@
 from wtforms import StringField, IntegerField
-from wtforms.validators import Email, InputRequired, Length, EqualTo
+from wtforms.validators import Email, InputRequired, Length, EqualTo, ValidationError
 from ..forms import BaseForm
+from utils import zlcache
+from flask import g
 
 
 class LoginForm(BaseForm):
@@ -17,4 +19,16 @@ class ResetPwdForm(BaseForm):
 
 class ResetEmailForm(BaseForm):
     email = StringField(validators=[Email(message='请输入正确的邮箱格式'), InputRequired(message='请输入邮箱')])
-    captcha = StringField(validators=[Length(4, 4, message='验证码格式错误')])
+    captcha = StringField(validators=[Length(6, 6, message='验证码格式错误')])
+
+    def validate_captcha(self, field):
+        captcha = field.data
+        email = self.email.data
+        captcha_cached = zlcache.get(email)
+        if not captcha_cached or captcha.lower() != captcha_cached.lower():
+            raise ValidationError("邮箱或验证码错误")
+
+    def validate_email(self, field):
+        email = field.data
+        if email == g.cms_user.email:
+            raise ValidationError('不能使用相同的邮箱')

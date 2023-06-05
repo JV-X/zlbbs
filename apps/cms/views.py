@@ -10,7 +10,6 @@ from flask import (
     redirect,
     url_for,
     g,
-    jsonify,
 )
 from .forms import LoginForm, ResetPwdForm, ResetEmailForm
 from .models import CMSUser
@@ -18,7 +17,7 @@ from .decorators import login_required
 import config
 from exts import db, mail
 from flask_mail import Message
-from utils import restful
+from utils import restful, zlcache
 import string
 import random
 
@@ -63,6 +62,7 @@ def email_captcha():
         mail.send(m)
     except:
         return restful.servererror('发送邮件失败')
+    zlcache.set(email, captcha)
     return restful.success()
 
 
@@ -123,7 +123,9 @@ class ResetEmailView(views.MethodView):
         form = ResetEmailForm(request.form)
         if form.validate():
             email = form.email.data
-            captcha = form.captcha.data
+            g.cms_user.email = email
+            db.session.commit()
+            return restful.success()
         else:
             return restful.params_error(form.get_error())
 

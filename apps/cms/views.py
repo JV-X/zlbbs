@@ -1,8 +1,19 @@
-from flask import Blueprint, views, render_template, request, session, redirect, url_for, g
+from flask import (
+    Blueprint,
+    views,
+    render_template,
+    request,
+    session,
+    redirect,
+    url_for,
+    g,
+    jsonify,
+)
 from .forms import LoginForm, ResetPwdForm
 from .models import CMSUser
 from .decorators import login_required
 import config
+from exts import db
 
 bp = Blueprint('cms', __name__, url_prefix='/cms')
 
@@ -55,7 +66,27 @@ class ResetPwdView(views.MethodView):
         return render_template('cms/cms_resetpwd.html')
 
     def post(self):
-        pass
+        form = ResetPwdForm(request.form)
+        if form.validate():
+            oldpwd = form.oldpwd.data
+            newpwd = form.newpwd.data
+            user = g.cms_user
+            if user.check_password(oldpwd):
+                user.password = newpwd
+                db.session.commit()
+                return jsonify({
+                    'code': 200,
+                    'message': '',
+                })
+            else:
+                return jsonify({
+                    'code':400,
+                    'message': '旧密码错误'
+                })
+
+        else:
+
+            print(form.errors)
 
 
 bp.add_url_rule('/login/', view_func=LoginView.as_view('login'))

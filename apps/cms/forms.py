@@ -1,13 +1,15 @@
-from wtforms import Form, StringField, IntegerField
-from wtforms.validators import Email, InputRequired, Length,EqualTo
+from wtforms import StringField, IntegerField
+from wtforms.validators import Email, InputRequired, Length, EqualTo
+from ..forms import BaseForm
 
 
-class LoginForm(Form):
+class LoginForm(BaseForm):
     email = StringField(validators=[Email(message='请输入正确的邮箱格式'), InputRequired(message='请输入邮箱')])
     password = StringField(validators=[Length(6, 20, message='密码格式错误')])
     remember = IntegerField()
 
-class ResetPwdForm(Form):
-    oldpwd = StringField(validators=[Length(6, 20, message='密码格式错误')])
-    newpwd = StringField(validators=[Length(6, 20, message='密码格式错误')])
-    newpwd2 = StringField(validators=[EqualTo('newpwd',message='两次输入不相同')])
+
+class ResetPwdForm(BaseForm):
+    oldpwd = StringField(validators=[Length(6, 20, message='旧密码格式错误')])
+    newpwd = StringField(validators=[Length(6, 20, message='新密码格式错误')])
+    newpwd2 = StringField(validators=[EqualTo('newpwd', message='两次输入不相同')])

@@ -10,7 +10,7 @@ $(function () {
         var newpwd2 = newpwd2E.val();
 
         zlajax.post({
-            'url':'cms/resetpwd/',
+            'url':'',
             'data': {
                 'oldpwd':oldpwd,
                 'newpwd':newpwd,

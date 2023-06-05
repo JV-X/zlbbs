@@ -1,4 +1,6 @@
 from flask import Flask
+
+import commands
 from apps.cms import bp as cms_bp
 from apps.common import bp as common_bp
 from apps.front import bp as front_bp
@@ -16,6 +18,8 @@ def create_app():
     app.register_blueprint(cms_bp)
     app.register_blueprint(common_bp)
     app.register_blueprint(front_bp)
+
+    app.cli.command('create_cms_user')(commands.create_cms_user)
     return app
 
 

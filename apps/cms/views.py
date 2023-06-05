@@ -3,6 +3,7 @@ from .forms import LoginForm
 from .models import CMSUser
 from .decorators import login_required
 import config
+
 bp = Blueprint('cms', __name__, url_prefix='/cms')
 
 
@@ -11,10 +12,17 @@ bp = Blueprint('cms', __name__, url_prefix='/cms')
 def index():
     return render_template('cms/cms_index.html')
 
+
 @bp.route('logout')
 def logout():
     del session[config.CMS_USER_ID]
     return redirect(url_for('cms.login'))
+
+
+@bp.route('profile')
+def profile():
+    return render_template('cms/cms_profile.html')
+
 
 class LoginView(views.MethodView):
     def get(self, message=None):

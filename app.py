@@ -24,6 +24,9 @@ def create_app():
     CSRFProtect(app)
 
     app.cli.command('create_cms_user')(commands.create_cms_user)
+    app.cli.command('create_role')(commands.create_role)
+    app.cli.command('test_permission')(commands.test_permission)
+    app.cli.command('add_user_to_role')(commands.add_user_to_role)
     return app
 
 

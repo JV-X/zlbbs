@@ -1,4 +1,6 @@
-from flask import Blueprint, views, render_template, url_for
+from flask import Blueprint, views, render_template, url_for,make_response
+from io import BytesIO
+from utils.captcha import Captcha
 
 bp = Blueprint('front', __name__)
 
@@ -6,6 +8,17 @@ bp = Blueprint('front', __name__)
 @bp.route('/')
 def index():
     return 'front'
+
+
+@bp.route('/captcha')
+def graph_captcha():
+    text, image = Captcha.gene_graph_captcha()
+    out = BytesIO()
+    image.save(out, 'png')
+    out.seek(0)
+    resp = make_response(out.read())
+    resp.content_type = 'image/png'
+    return resp
 
 
 class SignupView(views.MethodView):

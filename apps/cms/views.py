@@ -32,7 +32,11 @@ def index():
 
 @bp.route('logout')
 def logout():
-    del session[config.CMS_USER_ID]
+    if config.CMS_USER_ID in session:
+        print('has key')
+        del session[config.CMS_USER_ID]
+    else:
+        print('key not exist')
     return redirect(url_for('cms.login'))
 
 

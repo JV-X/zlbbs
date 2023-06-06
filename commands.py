@@ -3,7 +3,7 @@ from apps.cms.models import CMSUser, CMSRole, CMSPermission
 
 
 def create_cms_user():
-    user = CMSUser(username='admin', password='111111', email='xjv1195275315@qq.com')
+    user = CMSUser(username='我是管理员', password='111111', email='admin@qq.com')
     db.session.add(user)
     db.session.commit()
     print('cms用户添加成功！')
@@ -32,8 +32,8 @@ def test_permission():
 
 
 def add_user_to_role():
-    email = 'xjv1195275315@qq.com'
-    name = '访问者'
+    email = 'admin@qq.com'
+    name = '管理员'
     user = CMSUser.query.filter_by(email=email).first()
     if user:
         role = CMSRole.query.filter_by(name=name).first()

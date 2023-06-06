@@ -12,8 +12,8 @@ from flask import (
     g,
 )
 from .forms import LoginForm, ResetPwdForm, ResetEmailForm
-from .models import CMSUser
-from .decorators import login_required
+from .models import CMSUser, CMSPermission
+from .decorators import login_required, permission_required
 import config
 from exts import db, mail
 from flask_mail import Message
@@ -38,6 +38,42 @@ def logout():
     else:
         print('key not exist')
     return redirect(url_for('cms.login'))
+
+
+@bp.route('boards')
+@permission_required(CMSPermission.BOARDER)
+def boards():
+    return render_template('cms/cms_boards.html')
+
+
+@bp.route('comments')
+@permission_required(CMSPermission.COMMENTER)
+def comments():
+    return render_template('cms/cms_comments.html')
+
+
+@bp.route('croles')
+@permission_required(CMSPermission.ALL_PERMISSION)
+def croles():
+    return render_template('cms/cms_croles.html')
+
+
+@bp.route('cusers')
+@permission_required(CMSPermission.CMS_USER)
+def cusers():
+    return render_template('cms/cms_cusers.html')
+
+
+@bp.route('fusers')
+@permission_required(CMSPermission.FRONT_USER)
+def fusers():
+    return render_template('cms/cms_fusers.html')
+
+
+@bp.route('posts')
+@permission_required(CMSPermission.POSTER)
+def posts():
+    return render_template('cms/cms_posts.html')
 
 
 @bp.route('profile')

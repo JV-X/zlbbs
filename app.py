@@ -27,6 +27,7 @@ def create_app():
     app.cli.command('create_role')(commands.create_role)
     app.cli.command('test_permission')(commands.test_permission)
     app.cli.command('add_user_to_role')(commands.add_user_to_role)
+    app.cli.command('create_front_user')(commands.create_front_user)
     return app
 
 

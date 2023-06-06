@@ -1,5 +1,6 @@
 from exts import db
 from apps.cms.models import CMSUser, CMSRole, CMSPermission
+from apps.front.models import FrontUser
 
 
 def create_cms_user():
@@ -45,3 +46,13 @@ def add_user_to_role():
             print('没有这个角色：%s' % role)
     else:
         print('%s邮箱没有这个用户!' % email)
+
+
+def create_front_user():
+    telephone = '18408225544'
+    username = 'xjv123'
+    password = '111111'
+    front_user = FrontUser(telephone=telephone, username=username, password=password)
+    db.session.add(front_user)
+    db.session.commit()
+    print('添加前台用户成功')

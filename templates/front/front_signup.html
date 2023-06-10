@@ -10,6 +10,10 @@
     <script src="{{ static("front/js/front_signup.js") }}"></script>
     <script src="{{ static("common/zlparam.js") }}"></script>
     <link href="{{ static("front/css/front_signup.css") }}" rel="stylesheet"></link>
+    <script src="{{ static('common/zlajax.js') }}"></script>
+    <link rel="stylesheet" href="{{ static('common/sweetalert/sweetalert.css') }}">
+    <script src="{{ static('common/sweetalert/sweetalert.min.js') }}"></script>
+    <script src="{{ static('common/sweetalert/zlalert.js') }}"></script>
 </head>
 <body>
 <div class="outer-box">
@@ -18,13 +22,13 @@
             <img src="{{ static('common/images/logo.png') }}">
         </a>
     </div>
-    <h2 class="page-title">知了账号登录</h2>
+    <h2 class="page-title">知了账号注册</h2>
     <div class="sign-box">
         <div class="form-group">
             <div class="input-group">
                 <input type="text" class="form-control" name="telephone" placeholder="手机号码">
                 <span class="input-group-btn">
-                    <button class="btn btn-default">发送验证码</button>
+                    <button id='sms-captcha-btn' class="btn btn-default">发送验证码</button>
                 </span>
             </div>
         </div>

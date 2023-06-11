@@ -32,3 +32,11 @@ class ResetEmailForm(BaseForm):
         email = field.data
         if email == g.cms_user.email:
             raise ValidationError('不能使用相同的邮箱')
+
+
+class AddBannerForm(BaseForm):
+    name = StringField(validators=[InputRequired(message='请输入轮播图名字')])
+    image_url = StringField(validators=[InputRequired(message='请输入轮播图图片链接')])
+    link_url = StringField(validators=[InputRequired(message='请输入轮播图跳转链接')])
+    priority = StringField(validators=[InputRequired(message='请输入轮播图优先级')])
+

@@ -1,6 +1,7 @@
 from exts import db
 from apps.cms.models import CMSUser, CMSRole, CMSPermission
 from apps.front.models import FrontUser
+from apps.models import BannerModel
 
 
 def create_cms_user():

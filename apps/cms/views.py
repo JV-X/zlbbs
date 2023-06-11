@@ -44,7 +44,10 @@ def logout():
 @permission_required(CMSPermission.BOARDER)
 def boards():
     return render_template('cms/cms_boards.html')
-
+@bp.route("banners")
+@login_required
+def banners():
+    return render_template('cms/cms_banners.html')
 
 @bp.route('comments')
 @permission_required(CMSPermission.COMMENTER)

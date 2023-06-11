@@ -1,8 +1,10 @@
+{% from 'common/_macros.html' import static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     {% include 'common/_headers.html' %}
+    <link rel="stylesheet" href="{{ static('front/css/front_base.css') }}">
     <title>{% block title %}
 
     {% endblock %}</title>
@@ -43,6 +45,8 @@
         </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->
 </nav>
-{% block body %}{% endblock %}
+<div class="main-container">
+    {% block body %}{% endblock %}
+</div>
 </body>
 </html>

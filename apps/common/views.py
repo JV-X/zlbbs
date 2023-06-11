@@ -48,7 +48,7 @@ def sms_captcha():
 @bp.route('/captcha')
 def graph_captcha():
     text, image = Captcha.gene_graph_captcha()
-    zlcache.set(text.lower(),text.lower())
+    zlcache.set(text.lower(), text.lower())
     out = BytesIO()
     image.save(out, 'png')
     out.seek(0)

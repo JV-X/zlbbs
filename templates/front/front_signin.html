@@ -4,7 +4,7 @@
     知了课堂登录
 {% endblock %}
 {% block head %}
-
+    <script src="{{ static("front/js/front_signin.js") }}"></script>
 {% endblock %}
 
 {% block h2_block %}
@@ -19,15 +19,15 @@
         <input type="password" class="form-control" name="password" placeholder="密码">
     </div>
     <div class="checkbox">
-    <label>
-        <input type="checkbox" name="remember" value="1">记住我
-    </label>
+        <label>
+            <input type="checkbox" name="remember" value="1">记住我
+        </label>
     </div>
     <div class="form-group">
         <button class="btn btn-warning btn-block" id="submit-btn">立即登录</button>
     </div>
-    <div class="form-group" >
-    <a href="{{ url_for("front.signup") }}" class="signup-link">立即注册</a>
+    <div class="form-group">
+        <a href="{{ url_for("front.signup") }}" class="signup-link">立即注册</a>
         <a href="#" class="resetpwd-link" style="float: right">忘记密码</a>
     </div>
 {% endblock %}

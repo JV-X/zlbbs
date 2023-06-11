@@ -24,3 +24,8 @@ class SignupForm(BaseForm):
         graph_captcha_mem = zlcache.get(graph_captcha.lower())
         if not graph_captcha_mem:
             raise ValidationError(message='图形验证码错误')
+
+class SigninForm(BaseForm):
+    telephone = StringField(validators=[Regexp(r'1[345789]\d{9}', message='手机号码格式不对')])
+    password = StringField(validators=[Regexp(r'[0-9a-zA-Z_\.]{6,20}', message='密码格式不对')])
+    remember = StringField()

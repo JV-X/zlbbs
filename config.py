@@ -13,6 +13,7 @@ SQLALCHEMY_DATABASE_URI = DB_URI
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 CMS_USER_ID = 'qwreqsaxcvvd'
+FRONT_USER_ID = 'asdqwvqwedcvgft'
 
 MAIL_SERVER = "smtp.qq.com"
 MAIL_PORT = '587'

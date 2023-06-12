@@ -11,7 +11,8 @@ from flask import (
     url_for,
     g,
 )
-from .forms import LoginForm, ResetPwdForm, ResetEmailForm, AddBannerForm, UpdateBannerForm,AddBoardForm,UpdateBoardForm
+from .forms import LoginForm, ResetPwdForm, ResetEmailForm, AddBannerForm, UpdateBannerForm, AddBoardForm, \
+    UpdateBoardForm
 from .models import CMSUser, CMSPermission
 from ..models import BannerModel, BoardModel
 from .decorators import login_required, permission_required
@@ -55,6 +56,7 @@ def aboard():
     else:
         return restful.params_error(message=form.get_error())
 
+
 @bp.route('uboard', methods=['POST'])
 @login_required
 @permission_required(CMSPermission.BOARDER)
@@ -63,7 +65,7 @@ def uboard():
     if form.validate():
         name = form.name.data
         board_id = form.board_id.data
-        board = BoardModel.query.filter_by(id = board_id).first()
+        board = BoardModel.query.filter_by(id=board_id).first()
         if board:
             board.name = name
             db.session.commit()
@@ -72,6 +74,8 @@ def uboard():
             return restful.params_error('版块不存在')
     else:
         return restful.params_error(message=form.get_error())
+
+
 @bp.route('dboard', methods=['POST'])
 @login_required
 @permission_required(CMSPermission.BOARDER)
@@ -86,14 +90,15 @@ def dboard():
     db.session.commit()
     return restful.success()
 
+
 @bp.route('boards')
 @permission_required(CMSPermission.BOARDER)
 def boards():
     boards = BoardModel.query.all()
-    context= {
-        'boards':boards
+    context = {
+        'boards': boards
     }
-    return render_template('cms/cms_boards.html',**context)
+    return render_template('cms/cms_boards.html', **context)
 
 
 @bp.route("banners")

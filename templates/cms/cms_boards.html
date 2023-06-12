@@ -20,7 +20,7 @@
         </thead>
         <tbody>
         {% for board in boards %}
-            <tr>
+            <tr data-name="{{ board.name }}" data-id = "{{ board.id }}">
                 <td>{{ board.name }}</td>
                 <td>0</td>
                 <td>{{ board.create_time }}</td>

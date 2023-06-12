@@ -11,9 +11,9 @@ from flask import (
     url_for,
     g,
 )
-from .forms import LoginForm, ResetPwdForm, ResetEmailForm, AddBannerForm, UpdateBannerForm
+from .forms import LoginForm, ResetPwdForm, ResetEmailForm, AddBannerForm, UpdateBannerForm,AddBoardForm,UpdateBoardForm
 from .models import CMSUser, CMSPermission
-from ..models import BannerModel
+from ..models import BannerModel, BoardModel
 from .decorators import login_required, permission_required
 import config
 from exts import db, mail
@@ -41,10 +41,59 @@ def logout():
     return redirect(url_for('cms.login'))
 
 
+@bp.route('aboard', methods=['POST'])
+@login_required
+@permission_required(CMSPermission.BOARDER)
+def aboard():
+    form = AddBoardForm(request.form)
+    if form.validate():
+        name = form.name.data
+        board = BoardModel(name=name)
+        db.session.add(board)
+        db.session.commit()
+        return restful.success()
+    else:
+        return restful.params_error(message=form.get_error())
+
+@bp.route('uboard', methods=['POST'])
+@login_required
+@permission_required(CMSPermission.BOARDER)
+def uboard():
+    form = UpdateBoardForm(request.form)
+    if form.validate():
+        name = form.name.data
+        board_id = form.board_id.data
+        board = BoardModel.query.filter_by(id = board_id).first()
+        if board:
+            board.name = name
+            db.session.commit()
+            return restful.success()
+        else:
+            return restful.params_error('版块不存在')
+    else:
+        return restful.params_error(message=form.get_error())
+@bp.route('dboard', methods=['POST'])
+@login_required
+@permission_required(CMSPermission.BOARDER)
+def dboard():
+    board_id = request.form.get('board_id')
+    if not board_id:
+        return restful.params_error(message='请传入board id')
+    board = BoardModel.query.get(board_id)
+    if not board:
+        return restful.params_error(message='没有该版块')
+    db.session.delete(board)
+    db.session.commit()
+    return restful.success()
+
 @bp.route('boards')
 @permission_required(CMSPermission.BOARDER)
 def boards():
-    return render_template('cms/cms_boards.html')
+    boards = BoardModel.query.all()
+    context= {
+        'boards':boards
+    }
+    return render_template('cms/cms_boards.html',**context)
 
 
 @bp.route("banners")
@@ -94,7 +143,8 @@ def ubanner():
     else:
         return restful.params_error(message=form.get_error())
 
-@bp.route('dbanner',methods=['POST'])
+
+@bp.route('dbanner', methods=['POST'])
 @login_required
 def dbanner():
     banner_id = request.form.get('banner_id')
@@ -108,6 +158,7 @@ def dbanner():
             db.session.delete(banner)
             db.session.commit()
             return restful.success()
+
 
 @bp.route('comments')
 @permission_required(CMSPermission.COMMENTER)

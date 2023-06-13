@@ -1,4 +1,4 @@
-from flask import Blueprint, views, render_template, url_for, make_response, request, session
+from flask import Blueprint, views, render_template, url_for, g, request, session
 
 from utils import restful, safeutils
 from .forms import SignupForm, SigninForm, AddPostForm
@@ -15,9 +15,11 @@ bp = Blueprint('front', __name__)
 def index():
     banners = BannerModel.query.order_by(BannerModel.priority.desc()).limit(4)
     boards = BoardModel.query.all()
+    posts = PostModel.query.all()
     context = {
         'banners': banners,
         'boards': boards,
+        'posts': posts,
     }
     return render_template('front/front_index.html', **context)
 
@@ -27,7 +29,7 @@ def index():
 def apost():
     if request.method == 'GET':
         boards = BoardModel.query.all()
-        return render_template('front/front_apost.html',boards=boards)
+        return render_template('front/front_apost.html', boards=boards)
     else:
         form = AddPostForm(request.form)
         if form.validate():
@@ -40,11 +42,13 @@ def apost():
             else:
                 post = PostModel(title=title, content=content)
                 post.board = board
+                post.author = g.front_user
                 db.session.add(post)
                 db.session.commit()
                 return restful.success()
         else:
             return restful.params_error(message=form.get_error())
+
 
 class SignupView(views.MethodView):
     def get(self):

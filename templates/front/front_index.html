@@ -1,7 +1,8 @@
 {% extends 'front/front_base.html' %}
+{% from 'common/_macros.html' import static %}
 {% block title %}{% endblock %}
 {% block head %}
-
+    <link rel="stylesheet" href="{{ static('front/css/front_index.css') }}">
 {% endblock %}
 
 {% block body %}
@@ -28,7 +29,7 @@
                 </a>
                 </div>
                 {% endfor %}
-            </div>
+                </div>
 
                 <!-- Controls -->
                 <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
@@ -39,6 +40,37 @@
                     <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
                     <span class="sr-only">Next</span>
                 </a>
+            </div>
+            <div class="post-group">
+                <div class="post-head">
+                    <ul class="post-group-head">
+                        <li><a href="#">最新</a></li>
+                        <li><a href="#">精华帖子</a></li>
+                        <li><a href="#">点赞最多</a></li>
+                        <li><a href="#">评论最多</a></li>
+                    </ul>
+                    <ul class="post-list-group">
+                        {% for post in posts %}
+                            <li>
+                            <div class="author-avatar-group">
+                                <img src="{{ post.author.avatar or url_for('static', filename='common/images/logo.png') }}"
+                                     alt="">
+                            </div>
+                            <div class="post-info-group">
+                                <p class="post-title">{{ post.title }}</p>
+                                <p class="post-info">
+                                    <span>作者：{{ post.author.username }}</span>
+                                    <span>发表时间：{{ post.create_time }}</span>
+                                    <span>评论：0</span>
+                                    <span>阅读：0</span>
+
+                                </p>
+
+                            </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
             </div>
         </div>
         <div class="sm-container">

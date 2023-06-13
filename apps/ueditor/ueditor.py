@@ -18,6 +18,7 @@ import base64
 import sys
 import os
 from urllib import parse
+import config
 
 # 更改工作目录。这么做的目的是七牛qiniu的sdk
 # 在设置缓存路径的时候默认会设置到C:/Windows/System32下面
@@ -32,11 +33,11 @@ from io import BytesIO
 bp = Blueprint('ueditor', __name__, url_prefix='/ueditor')
 
 UEDITOR_UPLOAD_PATH = "images"
-UEDITOR_UPLOAD_TO_QINIU = False
-UEDITOR_QINIU_ACCESS_KEY = ""
-UEDITOR_QINIU_SECRET_KEY = ""
-UEDITOR_QINIU_BUCKET_NAME = ""
-UEDITOR_QINIU_DOMAIN = ""
+UEDITOR_UPLOAD_TO_QINIU = config.UEDITOR_UPLOAD_TO_QINIU
+UEDITOR_QINIU_ACCESS_KEY = config.UEDITOR_QINIU_ACCESS_KEY
+UEDITOR_QINIU_SECRET_KEY = config.UEDITOR_QINIU_SECRET_KEY
+UEDITOR_QINIU_BUCKET_NAME = config.UEDITOR_QINIU_BUCKET_NAME
+UEDITOR_QINIU_DOMAIN = config.UEDITOR_QINIU_DOMAIN
 
 
 @bp.before_app_request
@@ -52,12 +53,18 @@ def before_first_request():
         os.mkdir(UEDITOR_UPLOAD_PATH)
 
     UEDITOR_UPLOAD_TO_QINIU = app.config.get("UEDITOR_UPLOAD_TO_QINIU")
+    print(UEDITOR_UPLOAD_TO_QINIU)
     if UEDITOR_UPLOAD_TO_QINIU:
         try:
             UEDITOR_QINIU_ACCESS_KEY = app.config["UEDITOR_QINIU_ACCESS_KEY"]
             UEDITOR_QINIU_SECRET_KEY = app.config["UEDITOR_QINIU_SECRET_KEY"]
             UEDITOR_QINIU_BUCKET_NAME = app.config["UEDITOR_QINIU_BUCKET_NAME"]
             UEDITOR_QINIU_DOMAIN = app.config["UEDITOR_QINIU_DOMAIN"]
+            print(UEDITOR_QINIU_ACCESS_KEY)
+            print(UEDITOR_QINIU_SECRET_KEY)
+            print(UEDITOR_QINIU_DOMAIN)
+            print(UEDITOR_QINIU_BUCKET_NAME)
+
         except Exception as e:
             option = e.args[0]
             raise RuntimeError('请在app.config中配置%s！' % option)
@@ -90,6 +97,12 @@ def upload():
             'title': '',
             'original': ''
         }
+        print(UEDITOR_QINIU_ACCESS_KEY)
+        print(UEDITOR_QINIU_SECRET_KEY)
+        print(UEDITOR_QINIU_DOMAIN)
+        print(UEDITOR_QINIU_BUCKET_NAME)
+        print(UEDITOR_UPLOAD_TO_QINIU)
+        print('xx' * 10)
         if UEDITOR_UPLOAD_TO_QINIU:
             if not sys.modules.get('qiniu'):
                 raise RuntimeError('没有导入qiniu模块！')

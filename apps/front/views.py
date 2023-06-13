@@ -1,4 +1,4 @@
-from flask import Blueprint, views, render_template, url_for, g, request, session
+from flask import Blueprint, views, render_template, url_for, g, request, session,abort
 
 from utils import restful, safeutils
 from .forms import SignupForm, SigninForm, AddPostForm
@@ -39,6 +39,13 @@ def index():
         'current_board': board_id,
     }
     return render_template('front/front_index.html', **context)
+
+@bp.route('/p/<post_id>')
+def post_detail(post_id):
+    post = PostModel.query.get(post_id)
+    if not post:
+        abort(404)
+    return render_template('front/front_pdetail.html',post=post)
 
 
 @bp.route('/apost', methods=['POST', 'GET'])

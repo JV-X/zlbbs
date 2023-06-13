@@ -1,7 +1,7 @@
 from exts import db
 from apps.cms.models import CMSUser, CMSRole, CMSPermission
 from apps.front.models import FrontUser
-from apps.models import BannerModel
+from apps.models import BannerModel, BoardModel, PostModel
 
 
 def create_cms_user():
@@ -57,3 +57,15 @@ def create_front_user():
     db.session.add(front_user)
     db.session.commit()
     print('添加前台用户成功')
+
+def create_test_post():
+    for x in range(1,255):
+        title = f'标题{x}'
+        content=f'内容{x}'
+        board = BoardModel.query.first()
+        author = FrontUser.query.first()
+        post = PostModel(title=title,content=content)
+        post.author = author
+        db.session.add(post)
+        db.session.commit()
+    print('create_test_post done...')

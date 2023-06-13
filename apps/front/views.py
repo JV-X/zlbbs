@@ -7,6 +7,7 @@ from exts import db
 import config
 from .decorators import login_required
 from ..models import BannerModel, BoardModel, PostModel
+from flask_paginate import Pagination, get_page_parameter
 
 bp = Blueprint('front', __name__)
 
@@ -15,11 +16,17 @@ bp = Blueprint('front', __name__)
 def index():
     banners = BannerModel.query.order_by(BannerModel.priority.desc()).limit(4)
     boards = BoardModel.query.all()
-    posts = PostModel.query.all()
+    page = request.args.get(get_page_parameter(), type=int, default=1)
+    pagination = Pagination(bs_version=3, page=page, total=PostModel.query.count())
+    start = (page - 1) * config.PER_PAGE
+    end = start + config.PER_PAGE
+    posts = PostModel.query.slice(start, end)
+
     context = {
         'banners': banners,
         'boards': boards,
         'posts': posts,
+        'pagination': pagination,
     }
     return render_template('front/front_index.html', **context)
 

@@ -14,19 +14,29 @@ bp = Blueprint('front', __name__)
 
 @bp.route('/')
 def index():
+    board_id = request.args.get('bd', type=int, default=None)
+    page = request.args.get(get_page_parameter(), type=int, default=1)
+
     banners = BannerModel.query.order_by(BannerModel.priority.desc()).limit(4)
     boards = BoardModel.query.all()
-    page = request.args.get(get_page_parameter(), type=int, default=1)
-    pagination = Pagination(bs_version=3, page=page, total=PostModel.query.count())
+
     start = (page - 1) * config.PER_PAGE
     end = start + config.PER_PAGE
-    posts = PostModel.query.slice(start, end)
+
+    if board_id:
+        posts = PostModel.query.filter_by(board_id=board_id).slice(start, end)
+        total = PostModel.query.filter_by(board_id=board_id).count()
+    else:
+        posts = PostModel.query.slice(start, end)
+        total = PostModel.query.count()
+    pagination = Pagination(bs_version=3, page=page, total=total)
 
     context = {
         'banners': banners,
         'boards': boards,
         'posts': posts,
         'pagination': pagination,
+        'current_board': board_id,
     }
     return render_template('front/front_index.html', **context)
 

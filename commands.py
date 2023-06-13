@@ -58,13 +58,15 @@ def create_front_user():
     db.session.commit()
     print('添加前台用户成功')
 
+
 def create_test_post():
-    for x in range(1,255):
+    for x in range(1, 255):
         title = f'标题{x}'
-        content=f'内容{x}'
+        content = f'内容{x}'
         board = BoardModel.query.first()
         author = FrontUser.query.first()
-        post = PostModel(title=title,content=content)
+        post = PostModel(title=title, content=content)
+        post.board = board
         post.author = author
         db.session.add(post)
         db.session.commit()

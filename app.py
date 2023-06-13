@@ -4,6 +4,7 @@ import commands
 from apps.cms import bp as cms_bp
 from apps.common import bp as common_bp
 from apps.front import bp as front_bp
+from apps.ueditor import bp as ueditor_bp
 import config
 from exts import db, migrate,mail
 from flask_wtf import CSRFProtect
@@ -20,8 +21,10 @@ def create_app():
     app.register_blueprint(cms_bp)
     app.register_blueprint(common_bp)
     app.register_blueprint(front_bp)
+    app.register_blueprint(ueditor_bp)
 
-    CSRFProtect(app)
+    csrf = CSRFProtect(app)
+    csrf.exempt(ueditor_bp)
 
     app.cli.command('create_cms_user')(commands.create_cms_user)
     app.cli.command('create_role')(commands.create_role)

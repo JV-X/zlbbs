@@ -26,7 +26,8 @@ def index():
 @login_required
 def apost():
     if request.method == 'GET':
-        return render_template('front/front_apost.html')
+        boards = BoardModel.query.all()
+        return render_template('front/front_apost.html',boards=boards)
     else:
         form = AddPostForm(request.form)
         if form.validate():

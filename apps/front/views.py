@@ -1,12 +1,13 @@
 from flask import Blueprint, views, render_template, url_for, g, request, session, abort
+from sqlalchemy.sql import func
 
 from utils import restful, safeutils
-from .forms import SignupForm, SigninForm, AddPostForm,AddCommentForm
+from .forms import SignupForm, SigninForm, AddPostForm, AddCommentForm
 from .models import FrontUser
 from exts import db
 import config
 from .decorators import login_required
-from ..models import BannerModel, BoardModel, PostModel,CommentModel
+from ..models import BannerModel, BoardModel, PostModel, CommentModel, HighlightPostModel
 from flask_paginate import Pagination, get_page_parameter
 
 bp = Blueprint('front', __name__)
@@ -16,19 +17,29 @@ bp = Blueprint('front', __name__)
 def index():
     board_id = request.args.get('bd', type=int, default=None)
     page = request.args.get(get_page_parameter(), type=int, default=1)
-
+    sort = request.args.get("st", type=int, default=1)
     banners = BannerModel.query.order_by(BannerModel.priority.desc()).limit(4)
     boards = BoardModel.query.all()
-
+    query_obj = None
+    if sort == 1:
+        query_obj = PostModel.query.order_by(PostModel.create_time.desc())
+    elif sort == 2:
+        query_obj = db.session.query(PostModel).outerjoin(HighlightPostModel).order_by(
+            HighlightPostModel.create_time.desc(), PostModel.create_time.desc())
+    elif sort == 3:
+        query_obj = PostModel.query.order_by(PostModel.create_time.desc())
+    else:
+        query_obj = db.session.query(PostModel).outerjoin(CommentModel).group_by(PostModel.id).order_by(
+            func.count(CommentModel.id).desc(), PostModel.create_time.desc())
     start = (page - 1) * config.PER_PAGE
     end = start + config.PER_PAGE
 
     if board_id:
-        posts = PostModel.query.filter_by(board_id=board_id).slice(start, end)
-        total = PostModel.query.filter_by(board_id=board_id).count()
+        posts = query_obj.filter(PostModel.board_id == board_id).slice(start, end)
+        total = query_obj.filter(PostModel.board_id == board_id).count()
     else:
-        posts = PostModel.query.slice(start, end)
-        total = PostModel.query.count()
+        posts = query_obj.slice(start, end)
+        total = query_obj.count()
     pagination = Pagination(bs_version=3, page=page, total=total)
 
     context = {
@@ -37,6 +48,7 @@ def index():
         'posts': posts,
         'pagination': pagination,
         'current_board': board_id,
+        'current_sort': sort,
     }
     return render_template('front/front_index.html', **context)
 
@@ -49,7 +61,7 @@ def post_detail(post_id):
     return render_template('front/front_pdetail.html', post=post)
 
 
-@bp.route('/acomment',methods=['POST'])
+@bp.route('/acomment', methods=['POST'])
 @login_required
 def add_comment():
     form = AddCommentForm(request.form)
@@ -68,6 +80,7 @@ def add_comment():
             return restful.params_error('没有这个帖子')
     else:
         return restful.params_error(form.get_error())
+
 
 @bp.route('/apost', methods=['POST', 'GET'])
 @login_required

@@ -1,12 +1,12 @@
-from flask import Blueprint, views, render_template, url_for, g, request, session,abort
+from flask import Blueprint, views, render_template, url_for, g, request, session, abort
 
 from utils import restful, safeutils
-from .forms import SignupForm, SigninForm, AddPostForm
+from .forms import SignupForm, SigninForm, AddPostForm,AddCommentForm
 from .models import FrontUser
 from exts import db
 import config
 from .decorators import login_required
-from ..models import BannerModel, BoardModel, PostModel
+from ..models import BannerModel, BoardModel, PostModel,CommentModel
 from flask_paginate import Pagination, get_page_parameter
 
 bp = Blueprint('front', __name__)
@@ -40,13 +40,34 @@ def index():
     }
     return render_template('front/front_index.html', **context)
 
+
 @bp.route('/p/<post_id>')
 def post_detail(post_id):
     post = PostModel.query.get(post_id)
     if not post:
         abort(404)
-    return render_template('front/front_pdetail.html',post=post)
+    return render_template('front/front_pdetail.html', post=post)
 
+
+@bp.route('/acomment')
+@login_required
+def add_comment():
+    form = AddCommentForm(request.form)
+    if form.validate():
+        content = form.content.data
+        post_id = form.post_id.data
+        post = PostModel.query.get(post_id)
+        if post:
+            comment = CommentModel(content=content)
+            comment.post = post
+            comment.author = g.front_user
+            db.session.add(comment)
+            db.session.commit()
+            return restful.success()
+        else:
+            return restful.params_error('没有这个帖子')
+    else:
+        return restful.params_error(form.get_error())
 
 @bp.route('/apost', methods=['POST', 'GET'])
 @login_required
